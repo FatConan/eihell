@@ -25,6 +25,27 @@ class Team(object):
         self.outcomes.append(outcome)
         self.points += outcome[1]
 
+
+    @property
+    def wins(self):
+        return len([outcome for outcome in self.outcomes if "Win" in outcome[0]])
+
+    @property
+    def regulation_wins(self):
+        return len([outcome for outcome in self.outcomes if outcome[0] == "Win"])
+
+    @property
+    def losses(self):
+        return len([outcome for outcome in self.outcomes if outcome[0] == "Loss"])
+
+    @property
+    def overtime_losses(self):
+        return len([outcome for outcome in self.outcomes if outcome[0] == "Loss OT"])
+
+    @property
+    def shootout_losses(self):
+        return len([outcome for outcome in self.outcomes if outcome[0] == "Loss SO"])
+
     def reset(self):
         self.points = 0
         self.outcomes = []

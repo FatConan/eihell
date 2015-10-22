@@ -15,7 +15,7 @@ class Scraper(object):
     @classmethod
     def scrape(cls):
         response = requests.get('http://www.eliteleague.co.uk/fixtures-s12347')
-        soup = BeautifulSoup(response.text)
+        soup = BeautifulSoup(response.text, "lxml")
 
         try:
             table = soup.select("div.games table.rosterTable")[0]
@@ -67,7 +67,7 @@ if __name__ == '__main__':
             elif "OT" in result[4]:
                 outcome = GameSimulator.default_outcomes[1]
             else:
-                outcome = GameSimulator.default_outcomes[1]
+                outcome = GameSimulator.default_outcomes[0]
             score_text = unicode(result[4])
             scores = [int(score) for score in score_text.replace(u" SO","").replace(u" OT", "").split("-")]
             if scores[0] > scores[1]:
@@ -83,9 +83,14 @@ if __name__ == '__main__':
     range_max = 1000000
     for i in range(0, range_max):
         league.reset()
-        finals.append(league.play_games())
+        out = league.play_games()
+        finals.append(out)
 
-        #if i % 1000 == 0:
+        #print "TEAM, W, RW, L, OTL, SOL, PTS, %Chance"
+
+        #for team in out:
+        #    print "%s, %d, %d, %d, %d, %d, %d" % (team.name, team.wins, team.regulation_wins, team.losses, team.overtime_losses, team.shootout_losses, team.points)
+
         progress.progress_bar(range_max, i, "Simulating ")
     end = time.time()
     team_standings = {}
@@ -101,8 +106,10 @@ if __name__ == '__main__':
             except KeyError:
                 team_standings[team] = addition
 
+    print "TEAM, W, RW, L, OTL, SOL, PTS, %Chance"
+
     for team, total in team_standings.items():
-        print "%s, %d, %f%%" % (team.name, len(team.outcomes), (total * 1.0/range_max * 1.0) * 100.0)
+        print "%s, %d, %d, %d, %d, %d, %d, %f%%" % (team.name, team.wins, team.regulation_wins, team.losses, team.overtime_losses, team.shootout_losses, team.points,  (total * 1.0/range_max * 1.0) * 100.0)
 
 
     print "%d in %f" % (range_max, end-start)
