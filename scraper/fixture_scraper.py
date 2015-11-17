@@ -25,7 +25,7 @@ class Scraper(object):
 
         results = []
         if table_text is not None:
-            table = BeautifulSoup(table_text)
+            table = BeautifulSoup(table_text, "lxml")
             rows = table("tr")
 
             header = {}
@@ -80,7 +80,7 @@ if __name__ == '__main__':
     start = time.time()
     progress = Progress()
     finals = []
-    range_max = 1000000
+    range_max = 50000
     for i in range(0, range_max):
         league.reset()
         out = league.play_games()
