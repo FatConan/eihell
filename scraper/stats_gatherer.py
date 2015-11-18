@@ -17,7 +17,7 @@ try:
                 resp = requests.get("http://www.leaguestat.com/elite/elite/en/stats/%s" % a['href'])
                 s = BeautifulSoup(resp.text, "lxml")
                 s_text = unicode(s.select("body")[0])
-                text_file.write(s_text.encode("utf-8").replace('<body>', '').replace('</body>', '').replace('<br clear="all"/>', '').replace('<br/><br/>', '\n').replace('<br/>', '\n').strip())
+                text_file.write(s_text.encode("utf-8").replace('\xc2\xa0', ' ').replace('<body>', '').replace('</body>', '').replace('<br clear="all"/>', '').replace('<br/><br/>', '\n').replace('<br/>', '\n').strip())
 
     #print table
 except Exception, e:
