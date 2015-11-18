@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.0.0-alpha1/jquery.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/d3/3.5.9/d3.min.js"></script>
+        <script src="https://cdnjs.cloudflare.com/ajax/libs/underscore.js/1.8.3/underscore-min.js"></script>
+        <style type="text/css">
+            span.data{
+                display: none;
+            }
+        </style>
+    </head>
+    <body>
+        <span class="data" id="roster">{"63": "Jordan Steel", "83": "Trevor Gerling", "81": "Taylor Dickin", "84": "Kyle Bigos", "24": "Tyler Plews", "26": "Riley Emmerson", "27": "Nate Fleming", "23": "Craig McCallum", "28": "James Wallace", "1": "Carsen Chubak", "0": "Andy Bagshaw", "7": "Jay King", "8": "Paul Zanette", "77": "Brandon Coccimiglio", "91": "David  Rutherford", "11": "David Beatson", "58": "Jacob Johnston", "19": "Ryan Hayes", "18": "Sean Beattie", "31": "Craig Mallinson", "33": "Kevin Forshall", "89": "Callum Boyd", "54": "Kyle Flemington"}</span>
+        <span class="data" id="assists">{"Hayes_Fleming": 1, "Zanette_Hayes": 4, "Fleming_Gerling": 1, "McCallum_Zanette": 1, "Rutherford_Johnston": 3, "Rutherford_Sheen": 2, "_Gerling": 6, "_Sheen": 2, "Johnston_Gerling": 2, "Rutherford_Fleming": 2, "Gerling_Dickin": 1, "Dickin_Rutherford": 1, "Hayes_Plews": 1, "McCallum_Gerling": 1, "Rutherford_Flemington": 1, "Hayes_Zanette": 2, "Zanette_Flemington": 1, "Hayes_Johnston": 6, "Sheen_Rutherford": 2, "Hayes_Gerling": 1, "Dickin_Emmerson": 1, "Johnston_Dickin": 4, "Sheen_Hayes": 1, "Gerling_Rutherford": 2, "Johnston_Hayes": 4, "Zanette_Boyd": 1, "Zanette_Fleming": 1, "Boyd_Bigos": 1, "_Bigos": 1, "Bigos_Zanette": 1, "_Johnston": 6, "_Zanette": 11, "Hayes_McCallum": 6, "Dickin_Johnston": 1, "Rutherford_Bigos": 1, "McCallum_Hayes": 4, "_Emmerson": 1, "Sheen_Zanette": 2, "Dickin_Flemington": 1, "Flemington_Sheen": 1, "McCallum_Emmerson": 1, "Hayes_Dickin": 8, "Zanette_Gerling": 4, "Gerling_Fleming": 1, "Rutherford_Coccimiglio": 1, "Zanette_Dickin": 1, "Gerling_Sheen": 1, "_McCallum": 10, "Fleming_Emmerson": 1, "Bigos_Johnston": 1, "Rutherford_Gerling": 1, "Emmerson_Gerling": 1, "Coccimiglio_Bigos": 1, "Hayes_Bigos": 1, "_Rutherford": 9, "McCallum_Sheen": 1, "Dickin_Bigos": 1, "Emmerson_Rutherford": 1, "_Dickin": 7, "_Hayes": 21, "Gerling_McCallum": 1, "Johnston_Sheen": 1, "Rutherford_Zanette": 1, "Dickin_Hayes": 2, "Gerling_Bigos": 2, "Flemington_Emmerson": 1, "Dickin_McCallum": 8, "Zanette_Bigos": 1, "Fleming_Johnston": 1, "McCallum_Dickin": 4, "McCallum_Johnston": 1, "Gerling_Johnston": 1, "Gerling_Zanette": 3, "Zanette_Johnston": 2, "Johnston_McCallum": 2, "Dickin_Sheen": 1, "_Fleming": 2}</span>
+        <ul class="roster">
+
+        </ul>
+
+        <script type="text/javascript">
+            var roster = JSON.parse($('#roster').text());
+            var li =  _.template('<li class="player"><a data-id="<%-id %>">#<%- id %> <%- playerName %></a></li>');
+            $rosterUl = $('ul.roster');
+            for(playerNumber in roster){
+                $rosterUl.append(li({id: playerNumber, playerName: roster[playerNumber]}));
+            }
+
+
+            var data = JSON.parse($('#assists').text());
+            console.log(data);
+        </script>
+    </body>
+</html>
