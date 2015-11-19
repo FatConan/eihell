@@ -8,6 +8,11 @@
             span.data{
                 display: none;
             }
+            #canvas {
+                height: 1000px;
+                width: 100%;
+                border: 1px solid green;
+            }
         </style>
     </head>
     <body>
@@ -17,6 +22,10 @@
 
         </ul>
 
+        <div id="canvas">
+
+        </div>
+
         <script type="text/javascript">
             var roster = JSON.parse($('#roster').text());
             var li =  _.template('<li class="player"><a data-id="<%-id %>">#<%- id %> <%- playerName %></a></li>');
@@ -25,9 +34,38 @@
                 $rosterUl.append(li({id: playerNumber, playerName: roster[playerNumber]}));
             }
 
-
             var data = JSON.parse($('#assists').text());
             console.log(data);
+
+            var toolBox = ({
+                create: function(canvasDiv, data){
+                    this.canvasDiv = canvasDiv;
+                    this.data = data;
+                    return this;
+                },
+
+                resetCanvas: function(){
+                     this.canvas = d3.select(this.canvasDiv);
+                     var $canvas = $(this.canvasDiv);
+                     this.canvas.html("");
+                     console.log(this.canvas);
+                     this.svg = this.canvas.append("svg")
+                        .attr('height', $canvas.height())
+                        .attr('width', $canvas.width())
+                        .append("g");
+                },
+                
+                render: function(){
+                    this.resetCanvas();
+                }
+
+            }).create('#canvas', data);
+
+            toolBox.render();
+
+
+
+
         </script>
     </body>
 </html>
