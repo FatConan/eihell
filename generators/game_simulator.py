@@ -1,5 +1,6 @@
 import random
 
+
 class GameSimulator(object):
     default_outcomes = [(('Win', 2, None), ('Loss', 0, None)), (('Win OT', 2, None),('Loss OT', 1, None)), (('Win SO', 2, None),('Loss SO', 1, None)), (('Win', 2, None), ('Loss', 0, None))]
     order = [0, 1]
@@ -15,6 +16,7 @@ class GameSimulator(object):
         primary.add_outcome(outcome[0])
         secondary.add_outcome(outcome[1])
 
+
 class Team(object):
     def __init__(self, name):
         self.name = name
@@ -24,7 +26,6 @@ class Team(object):
     def add_outcome(self, outcome):
         self.outcomes.append(outcome)
         self.points += outcome[1]
-
 
     @property
     def wins(self):
@@ -50,6 +51,7 @@ class Team(object):
         self.points = 0
         self.outcomes = []
 
+
 class League(object):
     def __init__(self):
         self.teams = {}
@@ -74,8 +76,7 @@ class League(object):
                 self.teams.get(team_name_a).add_outcome(already_played[0])
                 self.teams.get(team_name_b).add_outcome(already_played[1])
 
-        league_final = self.teams.values()
-        league_final.sort(key=lambda x: -x.points)
+        league_final = sorted(self.teams.values(), key=lambda x: -x.points)
         return league_final
 
 
@@ -86,4 +87,4 @@ if __name__ == '__main__':
         GameSimulator.simulate(teams, GameSimulator.default_outcomes, GameSimulator.order)
 
     for t in teams:
-        print t.name, t.points, t.outcomes
+        print(t.name, t.points, t.outcomes)

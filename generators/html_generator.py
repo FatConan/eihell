@@ -5,7 +5,7 @@ from helpers.progress import Progress
 
 class HTMLGenerator:
     env = Environment(loader=PackageLoader(__name__, 'templates'))
-    html_folder =  "/home/fatconan/workspace/projects/eventVis/prototypes/eihl"
+    html_folder =  "/home/fatconan/workspace/git-projects/eihell/output"
     resources_folder = "resources"
     basic_html_template = 'base.html'
     progress = Progress()

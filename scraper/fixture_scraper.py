@@ -3,45 +3,54 @@ import json
 import os
 from bs4 import BeautifulSoup
 import requests
+import re
 
 
 class Scraper(object):
+    SCORE_MATCHER = re.compile("""([0-9]+)–([0-9]+) FINAL(( - )(SHOOTOUT|OT))*""")
+
     @classmethod
     def scrape(cls):
-        response = requests.get('https://eliteleague.co.uk/dask-fixtures/')
-        print response.text
-        soup = BeautifulSoup(response.text, "lxml")
+        response = requests.get('https://eliteleague.co.uk/game-centre/schedule/?season_id=18470')
+        soup = BeautifulSoup(response.text, 'lxml')
+        table = None
 
         try:
-            table = soup.select("table.sstable")[0]
-            table_text = unicode(table)
+            table = soup.select("section.container")[0]
         except IndexError:
-            print "Missing results table"
-            table_text = None
+            print("Missing results table")
 
         results = []
-        if table_text is not None:
-            table = BeautifulSoup(table_text, "lxml")
-            rows = table("tr")
-
-            header = {}
+        if table is not None:
+            current_date = None
+            rows = table.find_all("div")
             for i, row in enumerate(rows):
-                if row("th"):
-                    tds = row("th")
-                    header = dict([(t.get_text(), i) for i, t in enumerate(tds)])
-                elif row("td"):
-                    if i % 2== 0:
-                        tds = row("td")
-                        if 'League' in tds[header.get('Game ID')].get_text():
-                            data = [tds[header.get('Date')], tds[header.get('Visiting Team')], tds[header.get('Home Team')], tds[header.get('Game ID')], tds[header.get('Score')]]
-                            results.append([t.get_text() for t in data])
+                classes = row['class']
+                if 'date-row' in classes:
+                    current_date = row.text
+                elif 'game-row' in classes:
+                    home_team = row.find("span", class_="home-team").text
+                    away_team = row.find("span", class_="away-team").text
+                    score = row.find("span", class_="score").text
 
-            with open(os.path.join(os.path.abspath("resources"), "table.json"), "wb") as json_file:
+                    score_parts = cls.SCORE_MATCHER.match(score)
+
+                    if score_parts:
+                        home_score, away_score, _, _, outcome = score_parts.groups()
+                    else:
+                        home_score = None
+                        away_score = None
+                        outcome = None
+
+                    data = [current_date, away_team, home_team, None, home_score, away_score, outcome]
+                    results.append(data)
+
+            with open(os.path.join(os.path.abspath("resources"), "table.json"), "w") as json_file:
                 json.dump(results, json_file)
 
     @classmethod
     def read_stored_json(cls):
-         with open(os.path.join(os.path.abspath("resources"),"table.json"), "rb") as json_file:
+         with open(os.path.join(os.path.abspath("resources"), "table.json"), "r") as json_file:
                 return json.load(json_file)
 
 
