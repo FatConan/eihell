@@ -37,12 +37,21 @@ class Scraper(object):
 
                     if score_parts:
                         home_score, away_score, _, _, outcome = score_parts.groups()
+                        if outcome is None:
+                            outcome = "DEFAULT"
                     else:
                         home_score = None
                         away_score = None
                         outcome = None
 
-                    data = [current_date, away_team, home_team, None, home_score, away_score, outcome]
+                    data = {
+                        "date": current_date,
+                        "home": home_team,
+                        "away": away_team,
+                        "home_score": home_score,
+                        "away_score": away_score,
+                        "outcome_descriptor": outcome
+                    }
                     results.append(data)
 
             with open(os.path.join(os.path.abspath("resources"), "table.json"), "w") as json_file:
