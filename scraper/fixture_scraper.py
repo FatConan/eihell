@@ -4,6 +4,7 @@ import os
 from bs4 import BeautifulSoup
 import requests
 import re
+import dateparser
 
 
 class Scraper(object):
@@ -27,7 +28,7 @@ class Scraper(object):
             for i, row in enumerate(rows):
                 classes = row['class']
                 if 'date-row' in classes:
-                    current_date = row.text
+                    current_date = dateparser.parse(row.text)
                 elif 'game-row' in classes:
                     home_team = row.find("span", class_="home-team").text
                     away_team = row.find("span", class_="away-team").text
@@ -45,7 +46,7 @@ class Scraper(object):
                         outcome = None
 
                     data = {
-                        "date": current_date,
+                        "date": current_date.strftime("%Y-%m-%d"),
                         "home": home_team,
                         "away": away_team,
                         "home_score": home_score,
