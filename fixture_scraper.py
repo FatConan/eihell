@@ -1,5 +1,6 @@
 #coding: utf-8
 import json
+import datetime
 import os
 from bs4 import BeautifulSoup
 import requests
@@ -8,32 +9,28 @@ import dateparser
 
 
 class Scraper(object):
-    SCORE_MATCHER = re.compile("""([0-9]+)–([0-9]+) FINAL(( - )(SHOOTOUT|OT))*""")
-
+    SCORE_MATCHER = re.compile("""([0-9]+):([0-9]+)(( - )(SHOOTOUT|OT))*""")
+    SPLIT_FIXTURE = re.compile("""\s{2,}""")
     @classmethod
     def scrape(cls):
-        response = requests.get('https://eliteleague.co.uk/game-centre/schedule/?season_id=18470')
-        soup = BeautifulSoup(response.text, 'lxml')
+        response = requests.get('https://www.eliteleague.co.uk/schedule?id_season=2&id_team=0&id_month=999')
+        soup = BeautifulSoup(response.text, 'html.parser')
         table = None
 
         try:
-            table = soup.select("section.container")[0]
+            table = soup.select("div.container-fluid")[0]
         except IndexError:
             print("Missing results table")
 
         results = []
         if table is not None:
             current_date = None
-            rows = table.find_all("div")
-            for i, row in enumerate(rows):
+            for i, row in enumerate(table.find_all(["h2", "div"])):
                 classes = row['class']
-                if 'date-row' in classes:
-                    current_date = dateparser.parse(row.text)
-                elif 'game-row' in classes:
-                    home_team = row.find("span", class_="home-team").text
-                    away_team = row.find("span", class_="away-team").text
-                    score = row.find("span", class_="score").text
-
+                if row.name == "h2":
+                    current_date = datetime.datetime.strptime(row.get_text().split(" ")[1], '%d.%m.%Y')
+                elif row.name == "div" and "justify-content-center" in classes:
+                    away_team, score, home_team = [x for x in cls.SPLIT_FIXTURE.split(row.get_text()) if x]
                     score_parts = cls.SCORE_MATCHER.match(score)
 
                     if score_parts:
@@ -64,7 +61,8 @@ class Scraper(object):
                 return json.load(json_file)
 
 
-
+if __name__ == "__main__":
+    Scraper.scrape()
 
 
 
